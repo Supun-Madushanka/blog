@@ -2,6 +2,7 @@ require('dotenv').config()
 
 const express = require('express')
 const mongoose = require('mongoose')
+const authRoutes = require('./routes/authRoutes')
 
 const app = express()
 
@@ -12,9 +13,7 @@ app.use((req, res, next) => {
     next()
 })
 
-app.get('/', (req, res) => {
-    res.json({mssg: 'Welcome to the app'})
-})
+app.use('/auth', authRoutes)
 
 mongoose.connect(process.env.MONGO_URI)
     .then(() => {
