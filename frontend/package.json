@@ -6,6 +6,7 @@
   "dependencies": {
     "@reduxjs/toolkit": "^2.5.0",
     "cra-template": "1.2.0",
+    "firebase": "^11.1.0",
     "flowbite-react": "^0.10.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
