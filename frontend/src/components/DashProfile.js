@@ -16,10 +16,21 @@ export default function DashProfile() {
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
+      if (!file.type.startsWith('image/')) {
+        setImageFileUploadError(
+          'Invalid file type. Please upload an image file.'
+        );
+        setImageFileUploadProgress(null)
+        setImageFile(null);
+        setImageFileUrl(null);
+        return;
+      }
+
       setImageFile(file);
       setImageFileUrl(URL.createObjectURL(file));
+      setImageFileUploadError(null); 
     }
-  };
+    };
 
   useEffect(() => {
     if (imageFile) {
@@ -37,7 +48,8 @@ export default function DashProfile() {
       );
       setImageFileUploadProgress(null);
       setImageFile(null);
-      return;
+      setImageFileUrl(null)
+      return
     }
 
     const formData = new FormData();
@@ -65,6 +77,8 @@ export default function DashProfile() {
       );
       setImageFileUploadProgress(null);
       setImageFile(null);
+      setImageFileUrl(null);
+      return
     }
   };
 
