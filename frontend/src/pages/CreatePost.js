@@ -1,8 +1,54 @@
-import { Button, FileInput, Select, TextInput } from 'flowbite-react';
+import { Alert, Button, FileInput, Select, TextInput } from 'flowbite-react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
+import { useState } from 'react';
+import { CircularProgressbar } from 'react-circular-progressbar';
+import 'react-circular-progressbar/dist/styles.css';
+import axios from 'axios';
 
 export default function CreatePost() {
+  const [file, setFile] = useState(null);
+  const [imageUploadProgress, setImageUploadProgress] = useState(null);
+  const [imageUploadError, setImageUploadError] = useState(null);
+  const [formData, setFormData] = useState({});
+
+  const handleUploadImage = async () => {
+    try {
+      if (!file) {
+        setImageUploadError('Please select an image');
+        return;
+      }
+
+      setImageUploadError(null);
+      setImageUploadProgress(0);
+
+      const cloudFormData = new FormData();
+      cloudFormData.append('file', file);
+      cloudFormData.append('upload_preset', 'user_profile_photos'); 
+
+      const response = await axios.post(
+        'https://api.cloudinary.com/v1_1/dxhzkog1c/image/upload', 
+        cloudFormData,
+        {
+          onUploadProgress: (progressEvent) => {
+            const progress = Math.round(
+              (progressEvent.loaded / progressEvent.total) * 100
+            );
+            setImageUploadProgress(progress);
+          },
+        }
+      );
+
+      setImageUploadProgress(null)
+      setImageUploadError(null)
+      setFormData({ ...formData, image: response.data.secure_url })
+    } catch (error) {
+      setImageUploadError('Image upload failed');
+      setImageUploadProgress(null);
+      console.log(error);
+    }
+  };
+
   return (
     <div className='p-3 max-w-3xl mx-auto min-h-screen'>
       <h1 className='text-center text-3xl my-7 font-semibold'>Create a post</h1>
@@ -23,16 +69,39 @@ export default function CreatePost() {
           </Select>
         </div>
         <div className='flex gap-4 items-center justify-between border-4 border-teal-500 border-dotted p-3'>
-          <FileInput type='file' accept='image/*' />
+          <FileInput
+            type='file'
+            accept='image/*'
+            onChange={(e) => setFile(e.target.files[0])}
+          />
           <Button
             type='button'
             gradientDuoTone='purpleToBlue'
             size='sm'
             outline
+            onClick={handleUploadImage}
+            disabled={!!imageUploadProgress}
           >
-            Upload image
+            {imageUploadProgress ? (
+              <div className='w-16 h-16'>
+                <CircularProgressbar
+                  value={imageUploadProgress}
+                  text={`${imageUploadProgress || 0}%`}
+                />
+              </div>
+            ) : (
+              'Upload Image'
+            )}
           </Button>
         </div>
+        {imageUploadError && <Alert color='failure'>{imageUploadError}</Alert>}
+        {formData.image && (
+          <img
+            src={formData.image}
+            alt='upload'
+            className='w-full h-72 object-cover'
+          />
+        )}
         <ReactQuill
           theme='snow'
           placeholder='Write something...'
