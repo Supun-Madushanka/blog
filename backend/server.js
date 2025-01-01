@@ -5,6 +5,7 @@ const mongoose = require('mongoose')
 const authRoutes = require('./routes/authRoutes')
 const userRoutes = require('./routes/userRoutes')
 const postRoutes = require('./routes/postRoutes')
+const commentRoutes = require('./routes/commentRoutes')
 const cookieParser = require('cookie-parser')
 
 const app = express()
@@ -16,6 +17,7 @@ app.use(cookieParser())
 app.use('/auth', authRoutes)
 app.use('/user', userRoutes)
 app.use('/post', postRoutes)
+app.use('/comment', commentRoutes)
 
 mongoose.connect(process.env.MONGO_URI)
     .then(() => {
