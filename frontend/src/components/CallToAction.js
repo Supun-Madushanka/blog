@@ -6,7 +6,7 @@ const CallToAction = () => {
     justify-center items-center rounded-tl-3xl rounded-br-3xl text-center'>
       <div className='flex-1 justify-center flex flex-col'>
         <h2 className='text-2xl'>
-            Want to learn more about JavaScript?
+            Want to learn more about Java Script?
         </h2>
         <p className='text-gray-500 my-2'>
             Checkout these resources with 100 JS Projects
